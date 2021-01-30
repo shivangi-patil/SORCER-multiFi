@@ -16,7 +16,6 @@ import sorcer.service.Routine;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static sorcer.eo.operator.*;
-import static sorcer.so.operator.eval;
 import static sorcer.so.operator.exec;
 
 /**
@@ -75,6 +74,11 @@ public class CoffeeMakerTest {
 	}
 
 	@Test
+	public void testDeleteRecipe() {
+		assertTrue(coffeeMaker.deleteRecipe(espresso));
+	}
+
+	@Test
 	public void testContextCofee() throws ContextException {
 		assertTrue(espresso.getAmtCoffee() == 6);
 	}
@@ -115,6 +119,7 @@ public class CoffeeMakerTest {
 		assertEquals(coffeeMaker.getRecipeForName("mocha").getName(), "mocha");
 		assertEquals(coffeeMaker.getRecipeForName("macchiato").getName(), "macchiato");
 		assertEquals(coffeeMaker.getRecipeForName("americano").getName(), "americano");
+
 	}
 
 	@Test
@@ -123,5 +128,41 @@ public class CoffeeMakerTest {
 		assertEquals(coffeeMaker.makeCoffee(espresso, 200), 150);
 	}
 
+	@Test
+	public void addMoreThanThree(){
+		assertTrue(coffeeMaker.addRecipe(espresso));
+		assertTrue(coffeeMaker.addRecipe(mocha));
+		assertTrue(coffeeMaker.addRecipe(americano));
+		assertTrue(coffeeMaker.addRecipe(macchiato));
+	}
+
+	@Test
+	public void deleteRecipeTest(){
+		coffeeMaker.addRecipe(mocha);
+		coffeeMaker.deleteRecipe(mocha);
+		assertEquals("",coffeeMaker.getRecipes()[0].getName());
+	}
+
+	@Test
+	public void editRecipeTest(){
+		coffeeMaker.addRecipe(mocha);
+		coffeeMaker.editRecipe(mocha,macchiato);
+		assertEquals(macchiato, coffeeMaker.getRecipes()[0]);
+	}
+
+	@Test
+	public void payLessForCoffee(){
+		int amtPaid=40;
+		assertEquals(amtPaid, coffeeMaker.makeCoffee(espresso, amtPaid));
+	}
+
+	@Test
+	public void inventoryCheck(){
+		coffeeMaker.makeCoffee(espresso, 50);
+		assertEquals(9, inventory.getCoffee());
+		assertEquals(14, inventory.getMilk());
+		assertEquals(13, inventory.getSugar());
+		assertEquals(15, inventory.getChocolate());
+	}
 }
 
